@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Expense - Personal Expense Tracker</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="{{ url_for('dashboard') }}">Back to Dashboard</a>
+        </nav>
+    </header>
+
+    <main>
+        <section>
+            <h1>Add / Edit Expense</h1>
+            <form method="POST">
+                <div>
+                    <label for="description">Description</label>
+                    <input type="text" id="description" name="description" placeholder="e.g., Grocery shopping" required>
+                    <!-- Trigger for AI Suggestion endpoint -->
+                    <button type="button" id="ai-suggest-btn">Suggest Category (AI)</button>
+                </div>
+
+                <div>
+                    <label for="amount">Amount ($)</label>
+                    <input type="number" id="amount" name="amount" step="0.01" required>
+                </div>
+
+                <div>
+                    <label for="category_id">Category</label>
+                    <select id="category_id" name="category_id" required>
+                        <option value="">Select Category</option>
+                        {% if categories %}
+                            {% for cat in categories %}
+                                <option 
+                                    value="{{ cat.id if cat.id is defined else cat['id'] }}"
+                                    {% if expense and (expense.category_id|string == (cat.id if cat.id is defined else cat['id'])|string) %}selected{% endif %}
+                                >
+                                    {{ cat.name if cat.name is defined else cat['name'] }}
+                                </option>
+                            {% endfor %}
+                        {% else %}
+                            <!-- Hardcoded fallback if database returns no categories for the user -->
+                            <option value="6e82547e-dca3-4e12-9024-97d681ef0c12">Groceries</option>
+                            <option value="6fd53aef-9f73-48fb-99de-b619dc109b3c">Entertainment</option>
+                            <option value="8a4da919-721a-4209-a7e0-7ad93cc9895a">Utilities</option>
+                        {% endif %}
+                    </select>
+                </div>
+
+                <div>
+                    <label for="expense_date">Date</label>
+                    <input type="date" id="expense_date" name="expense_date" required>
+                </div>
+
+                <button type="submit">Save Expense</button>
+            </form>
+        </section>
+    </main>
+</body>
+</html>

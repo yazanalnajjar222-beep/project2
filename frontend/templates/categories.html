@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Categories - Expense Tracker</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <nav>
+                <h2>Manage Categories</h2>
+                <ul>
+                    <li><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+                    <li><a href="{{ url_for('expense_form') }}">+ Add Expense</a></li>
+                    <li><a href="{{ url_for('logout') }}">Logout</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main>
+            <!-- Form to Add a New Category -->
+            <section class="card">
+                <h2>Add New Category</h2>
+                <form action="/categories" method="POST">
+                    <div class="form-group">
+                        <label for="name">Category Name</label>
+                        <input type="text" id="name" name="name" placeholder="e.g. Groceries, Rent" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="monthly_budget">Monthly Budget ($)</label>
+                        <input type="number" step="0.01" id="monthly_budget" name="monthly_budget" placeholder="300.00" required>
+                    </div>
+
+                    <button type="submit" class="btn">Create Category</button>
+                </form>
+            </section>
+
+            <!-- List of Existing Categories -->
+            <section class="card">
+                <h2>Your Categories</h2>
+                {% if categories %}
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Category Name</th>
+                                <th>Monthly Budget</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for cat in categories %}
+                                <tr>
+                                    <td><strong>{{ cat.name if cat.name is defined else cat['name'] }}</strong></td>
+                                    <td>${{ "%.2f"|format(cat.monthly_budget if cat.monthly_budget is defined else cat['monthly_budget']) }}</td>
+                                    <td>
+                                        <form action="/categories/delete/{{ cat.id if cat.id is defined else cat['id'] }}" method="POST" onsubmit="return confirm('Deleting this category will affect related expenses. Continue?');">
+                                            <button type="submit" class="btn-danger">Delete</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <p>No categories created yet. Add one above to get started!</p>
+                {% endif %}
+            </section>
+        </main>
+    </div>
+</body>
+</html>

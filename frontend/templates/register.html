@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Personal Expense Tracker</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='register.css') }}">
+</head>
+<body>
+    <main>
+        <section>
+            <h1>Create Account</h1>
+            {% if error %}
+                <div class="alert-error" style="color: #c0392b; background: #fdf2f2; border: 1px solid #f8b4b4; padding: 10px; border-radius: 4px; margin-bottom: 16px; font-size: 14px;">
+                    {{ error }}
+                </div>
+            {% endif %}
+            <form action="register" method="POST">
+                <div>
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div>
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div>
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <button type="submit">Register</button>
+            </form>
+            <p>Already have an account? <a href="login">Log in here</a></p>
+        </section>
+    </main>
+</body>
+</html>
