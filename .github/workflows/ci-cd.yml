@@ -1,4 +1,3 @@
-                                                                                                                               .github/workflows/ci-cd.yml                                                                                                                                        
 name: CI/CD
 
 on:
@@ -10,11 +9,9 @@ jobs:
   build:
     runs-on: self-hosted
 
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
 
       - name: Login to GHCR
         run: |
@@ -22,7 +19,7 @@ jobs:
 
       - name: Build Backend Image
         run: |
-          docker build -t ghcr.io/${{ github.repository_owner }}/project2-backend:latest ./backend
+          docker build -t ghcr.io/${{ github.repository_owner }}/project2-backend:latest -f backend/Dockerfile .
 
       - name: Push Backend Image
         run: |
@@ -39,6 +36,9 @@ jobs:
       - name: Login to GHCR
         run: |
           echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Generate .env from Vault
+        run: bash vault.sh
 
       - name: Pull latest image
         run: |

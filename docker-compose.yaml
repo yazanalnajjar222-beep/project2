@@ -1,32 +1,42 @@
+compose.yaml
 services:
   backend:
-    build:
-      context: .
-      dockerfile: backend/Dockerfile
+    image: ghcr.io/alaa1632/project2-backend:latest
     container_name: expense_backend
     ports:
       - "8000:8000"
     depends_on:
-      - database
+      database:
+        condition: service_healthy
     environment:
-      DATABASE_URL: postgresql://postgres:postgres@database:5432/expense_tracker
+      DATABASE_HOST: ${DATABASE_HOST}
+      DATABASE_PORT: ${DATABASE_PORT}
+      DATABASE_URL: ${DATABASE_URL}
+      VAULT_HOST: ${VAULT_HOST}
+      VAULT_PORT: ${VAULT_PORT}
     networks:
       - expense_network
+
   database:
     image: postgres:16
     container_name: database
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: expense_tracker
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     ports:
       - "5432:5432"
     volumes:
       - ../database/data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
     networks:
       - expense_network
+
 networks:
   expense_network:
     driver: bridge
-
-
