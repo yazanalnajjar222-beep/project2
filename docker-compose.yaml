@@ -1,7 +1,6 @@
-compose.yaml
 services:
   backend:
-    image: ghcr.io/alaa1632/project2-backend:latest
+    image: ghcr.io/yazanalnajjar222-beep/project2-backend:latest
     container_name: expense_backend
     ports:
       - "8000:8000"
