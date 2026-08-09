@@ -1,0 +1,53 @@
+                                                                                                                               .github/workflows/ci-cd.yml                                                                                                                                        
+name: CI/CD
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: self-hosted
+
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+
+      - name: Login to GHCR
+        run: |
+          echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Build Backend Image
+        run: |
+          docker build -t ghcr.io/${{ github.repository_owner }}/project2-backend:latest ./backend
+
+      - name: Push Backend Image
+        run: |
+          docker push ghcr.io/${{ github.repository_owner }}/project2-backend:latest
+
+  deploy:
+    needs: build
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Login to GHCR
+        run: |
+          echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Pull latest image
+        run: |
+          docker compose pull
+
+      - name: Stop containers
+        run: |
+          docker compose down
+
+      - name: Start containers
+        run: |
+          docker compose up -d

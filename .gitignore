@@ -1,0 +1,10 @@
+cat > .gitignore <<'EOF'
+.env
+.env.*
+vault.sh
+actions-runner/
+__pycache__/
+*.pyc
+*.key
+*.pem
+EOF
